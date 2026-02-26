@@ -1,6 +1,7 @@
 package org.acme.Resources;
 
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.acme.Domain.University;
@@ -16,6 +17,8 @@ public class UniversityResources {
     UniversityMapper universityMapper;
 
     @POST
+    @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public University createUniversity(UniversityDTO universityDTO) {
         University university = universityMapper.toEntity(universityDTO);
@@ -38,6 +41,8 @@ public class UniversityResources {
 
     @PUT
     @Path("/{id}")
+    @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public University updateUniversity(@PathParam("id") Long id, UniversityDTO universityDTO) {
         University university = University.findById(id);
@@ -49,12 +54,12 @@ public class UniversityResources {
         university.setName(universityDTO.getName());
         university.setLocation(universityDTO.getLocation());
 
-        university.persist();
         return university;
     }
 
     @DELETE
     @Path("/{id}")
+    @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     public University deleteUniversity(@PathParam("id") Long id) {
         University university = University.findById(id);
@@ -73,3 +78,4 @@ public class UniversityResources {
         return University.listAll();
     }
 }
+

@@ -1,6 +1,8 @@
 package org.acme.Resources;
 
+import io.quarkus.logging.Log;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.acme.Domain.Student;
@@ -16,6 +18,8 @@ public class StudentsResources {
     StudentMapper studentMapper;
 
     @POST
+    @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Student createStudent(StudentDTO studentDTO) {
         Student student = studentMapper.toEntity(studentDTO);
@@ -38,6 +42,7 @@ public class StudentsResources {
 
     @PUT
     @Path("/{id}")
+    @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     public Student updateStudent(@PathParam("id") Long id, StudentDTO studentDTO) {
         Student student = Student.findById(id);
@@ -49,12 +54,12 @@ public class StudentsResources {
         student.setName(studentDTO.getName());
         student.setEmail(studentDTO.getEmail());
 
-        student.persist();
         return student;
     }
 
     @DELETE
     @Path("/{id}")
+    @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     public Student deleteStudent(@PathParam("id") Long id) {
         Student student = Student.findById(id);
